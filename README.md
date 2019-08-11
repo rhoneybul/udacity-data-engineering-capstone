@@ -55,7 +55,7 @@ The analysis completed in this jupyter notebook drove the decisions behind the s
 
 ### 3. Define the Data Model
 
-The data model choice was driven by anaylsing the schemas in step 2. 
+The data model choice was driven by analysing the schemas in step 2. 
 
 The following data model was chosen;
 
@@ -83,7 +83,7 @@ The following table will serve as the fact table. This gives a record of all the
 | - `gender varchar` _gender_  
 | - `ins_number varchar` _INS number_  
 | - `airline varchar` _airline which travelled on_  
-| - `admission_number integer` _admission number_  
+| - `admission_number integer NOT NULL [UNIQUE]` _admission number, should be unique and not nullable_  
 | - `flight_number varchar` _flight number travelled on_  
 | - `visa_type varchar` _visa type_  
 
@@ -106,7 +106,7 @@ Since the source country for each immigration is given in country, we will just 
 | Columns  
 | - `ts date` _date for the temperature record_  
 | - `average_temperature float` _average temperature_  
-| - `country_id uuid` _country_  
+| - `country_code integer` _country_  
 
 **countries**
 
@@ -139,8 +139,8 @@ This table will provide the demographics for each city, by country code in the U
 This table will provide a dimension table for the cities in the United States.
 
 | Table Name :: `cities`
-| - `city_id uuid` _uuid given for the city record_  
-| - `city varchar` _city name_  
+| - `city_id uuid UNIQUE` _uuid given for the city record_  
+| - `name varchar` _city name_  
 | - `state varchar` _state name_  
 | - `state_code varchar` _state code_  
 
@@ -149,7 +149,7 @@ This table will provide a dimension table for the cities in the United States.
 This table will serve as a dimension table, providing the codes for airports in the united states.
 
 | Table Name :: `airport_codes`   
-| - `id varchar` _identifier for the airport_
+| - `id varchar UNIQUE NOT NULL` _identifier for the airport_
 | - `type varchar` _the type of airport_
 | - `name varchar` _the airport name_  
 | - `elevation_ft float` _the elevation of the airport in feet_  
@@ -162,7 +162,14 @@ This table will serve as a dimension table, providing the codes for airports in 
 | - `local_code varchar` _the local code used for the airport_  
 | - `coordinates varchar` _the coordinates of the airport_  
 
+#### Steps Required for Data Pipeline
 
+The steps required to create the data pipeline, and load the data into the relevant tables is as follows;
+
+1. Create the relevant tables, dropping them first if they exist.
+2. Load in the relevant datasets.
+3. Create the cities, and countries dimension tables.
+4. 
 
 
 
