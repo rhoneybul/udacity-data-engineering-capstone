@@ -144,9 +144,9 @@ This table will provide a dimension table for the cities in the United States.
 This table will serve as a dimension table, providing the codes for airports in the united states.
 
 | Table Name :: `airport_codes`   
-| - `id varchar UNIQUE NOT NULL` _identifier for the airport_
-| - `type varchar` _the type of airport_
-| - `name varchar` _the airport name_  
+| - `id varchar UNIQUE NOT NULL` _identifier for the airport_  
+| - `type varchar` _the type of airport_  
+| - `name varchar` _the airport name_    
 | - `elevation_ft float` _the elevation of the airport in feet_  
 | - `continent varchar` _the continent of the airport_  
 | - `iso_country varchar` _the country which the airport is in_  
