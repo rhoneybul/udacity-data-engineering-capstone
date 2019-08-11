@@ -49,4 +49,4 @@ This will enable us to determine the data model, the procedure required to clean
 
 The data exploration steps were performed using a jupyter notebook. The aim will be to read each data source into a dataframe using spark, and to subsequently assess the data. 
 
-The jupyter notebook is available in `./UdacityDendCapstone.ipynb`
+The jupyter notebook containing the relevant exploration is available in `./UdacityDendCapstone.ipynb`
