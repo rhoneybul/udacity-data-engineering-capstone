@@ -91,12 +91,12 @@ The following table will serve as the fact table. This gives a record of all the
 
 The following table gives the global temperatures over time. To simplify the data model we will have only average land temperature, minimum land temperature, and max land temperature.
 
-| Table Name :: `global_temperatures`  
-| Columns  
-| - `ts date` _date for the temperature record_  
-| - `average_temperature float` _average temperature_
-| - `minimum_temperature float` _minimum temperature_
-| - `maximum_temperature float` _maximum temperature_
+| Table Name :: `global_temperatures`   
+| Columns    
+| - `ts date` _date for the temperature record_    
+| - `average_temperature float` _average temperature_  
+| - `minimum_temperature float` _minimum temperature_  
+| - `maximum_temperature float` _maximum temperature_  
 
 **global_temperatures_by_country**
 
@@ -104,63 +104,63 @@ Since the source country for each immigration is given in country, we will just 
 
 | Table Name :: `global_temperatures_countries`  
 | Columns  
-| - `ts date` _date for the temperature record_
-| - `average_temperature float` _average temperature_
-| - `country_id uuid` _country_
+| - `ts date` _date for the temperature record_  
+| - `average_temperature float` _average temperature_  
+| - `country_id uuid` _country_  
 
 **countries**
 
 The following table will serve as a dimension table for all the countries. 
 
-| Table Name :: `countries`]
-| Columns
-| - `country_code integer` _country code_
-| - `name varchar` _country name_
+| Table Name :: `countries`  
+| Columns  
+| - `country_code integer` _country code_  
+| - `name varchar` _country name_  
 
 **demographics**
 
 This table will provide the demographics for each city, by country code in the United States. This will form the fact table for city based demographics. We will have a dimension table for the city information to prevent duplicated data.
 
-| Table Name :: `demographics`
-| Columns
-| - `city_id varchar` _city name_
-| - `median_age integer` _median age_
-| - `male_population integer` _males population in the city_
-| - `female_population integer` _female population in the city_
-| - `total_population integer` _total city population_
-| - `number_of_veterans integer` _total number of veterans in the city_
-| - `foreign_born integer` _total population of foreign born residents_
-| - `average_household_size float` _average number of residents per household_
-| - `race varchar` _race for the demographic statistic_
-| - `count integer` _number of residens satisfying the relevant demographic_
+| Table Name :: `demographics`  
+| Columns  
+| - `city_id varchar` _city name_  
+| - `median_age integer` _median age_  
+| - `male_population integer` _males population in the city_  
+| - `female_population integer` _female population in the city_  
+| - `total_population integer` _total city population_  
+| - `number_of_veterans integer` _total number of veterans in the city_  
+| - `foreign_born integer` _total population of foreign born residents_  
+| - `average_household_size float` _average number of residents per household_  
+| - `race varchar` _race for the demographic statistic_  
+| - `count integer` _number of residens satisfying the relevant demographic_  
 
 **cities**
 
 This table will provide a dimension table for the cities in the United States.
 
 | Table Name :: `cities`
-| - `city_id uuid` _uuid given for the city record_
-| - `city varchar` _city name_
-| - `state varchar` _state name_
-| - `state_code varchar` _state code_
+| - `city_id uuid` _uuid given for the city record_  
+| - `city varchar` _city name_  
+| - `state varchar` _state name_  
+| - `state_code varchar` _state code_  
 
 **airport_codes**
 
 This table will serve as a dimension table, providing the codes for airports in the united states.
 
-| Table Name :: `airport_codes`
-| - `id varchar` _identifier for the airport`
+| Table Name :: `airport_codes`   
+| - `id varchar` _identifier for the airport_
 | - `type varchar` _the type of airport_
-| - `name varchar` _the airport name_
-| - `elevation_ft float` _the elevation of the airport in feet_
-| - `continent varchar` _the continent of the airport_
-| - `iso_country varchar` _the country which the airport is in_
-| - `iso_region varchar` _the region which the aiport is in_
-| - `municipality varchar` _the municipality of the airport_
-| - `gps_code varchar` _the gps code for the airport`
-| - `iata_code varchar` _the iata code`
-| - `local_code varchar` _the local code used for the airport`
-| - `coordinates varchar` _the coordinates of the airport.
+| - `name varchar` _the airport name_  
+| - `elevation_ft float` _the elevation of the airport in feet_  
+| - `continent varchar` _the continent of the airport_  
+| - `iso_country varchar` _the country which the airport is in_  
+| - `iso_region varchar` _the region which the aiport is in_  
+| - `municipality varchar` _the municipality of the airport_  
+| - `gps_code varchar` _the gps code for the airport_    
+| - `iata_code varchar` _the iata code_  
+| - `local_code varchar` _the local code used for the airport_  
+| - `coordinates varchar` _the coordinates of the airport_  
 
 
 
