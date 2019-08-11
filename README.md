@@ -50,3 +50,125 @@ This will enable us to determine the data model, the procedure required to clean
 The data exploration steps were performed using a jupyter notebook. The aim will be to read each data source into a dataframe using spark, and to subsequently assess the data. 
 
 The jupyter notebook containing the relevant exploration is available in `./UdacityDendCapstone.ipynb`
+
+The analysis completed in this jupyter notebook drove the decisions behind the schema chosen for the database tables.
+
+### 3. Define the Data Model
+
+The data model choice was driven by anaylsing the schemas in step 2. 
+
+The following data model was chosen;
+
+**immigrations**
+
+The following table will serve as the fact table. This gives a record of all the immigrations into the united states.
+
+| Table Name :: `immigrations`  
+| Columns  
+| - `ciid integer NOT NULL` _id for the immigration record, must be not null as to provide unique identifier_   
+| - `year integer` _year of immigration_  
+| - `month integer` _month of immigration_  
+| - `country_code uuid` _source for immigration_  
+| - `port varchar` _port addmitted through_  
+| - `arrival_date date` _date of arrival_  
+| - `mode integer` _mode of arrival_  
+| - `address varchar` _state of arrival_  
+| - `visa integer` _visa category_  
+| - `count integer` _count, used for summary statistics_  
+| - `occupation varchar` _occupation_  
+| - `arrival_flag varchar` _whether admitted or paroled into the US_  
+| - `departure_flag varchar` _whether departed, lost visa, or deceased_  
+| - `update_flag varchar` _update of visa, either apprehended, overstayed, or updated to PR_  
+| - `date_of_birth date` _date of birth_  
+| - `gender varchar` _gender_  
+| - `ins_number varchar` _INS number_  
+| - `airline varchar` _airline which travelled on_  
+| - `admission_number integer` _admission number_  
+| - `flight_number varchar` _flight number travelled on_  
+| - `visa_type varchar` _visa type_  
+
+**global_temperatures**
+
+The following table gives the global temperatures over time. To simplify the data model we will have only average land temperature, minimum land temperature, and max land temperature.
+
+| Table Name :: `global_temperatures`  
+| Columns  
+| - `ts date` _date for the temperature record_  
+| - `average_temperature float` _average temperature_
+| - `minimum_temperature float` _minimum temperature_
+| - `maximum_temperature float` _maximum temperature_
+
+**global_temperatures_by_country**
+
+Since the source country for each immigration is given in country, we will just use the global temperature records based on country. A more granular data source would not provide any further value to the warehouse. We will use the average temperature only, as the uncertainty will not factor into the analysis performed on the warehouse. This will serve as a fact table.
+
+| Table Name :: `global_temperatures_countries`  
+| Columns  
+| - `ts date` _date for the temperature record_
+| - `average_temperature float` _average temperature_
+| - `country_id uuid` _country_
+
+**countries**
+
+The following table will serve as a dimension table for all the countries. 
+
+| Table Name :: `countries`]
+| Columns
+| - `country_code integer` _country code_
+| - `name varchar` _country name_
+
+**demographics**
+
+This table will provide the demographics for each city, by country code in the United States. This will form the fact table for city based demographics. We will have a dimension table for the city information to prevent duplicated data.
+
+| Table Name :: `demographics`
+| Columns
+| - `city_id varchar` _city name_
+| - `median_age integer` _median age_
+| - `male_population integer` _males population in the city_
+| - `female_population integer` _female population in the city_
+| - `total_population integer` _total city population_
+| - `number_of_veterans integer` _total number of veterans in the city_
+| - `foreign_born integer` _total population of foreign born residents_
+| - `average_household_size float` _average number of residents per household_
+| - `race varchar` _race for the demographic statistic_
+| - `count integer` _number of residens satisfying the relevant demographic_
+
+**cities**
+
+This table will provide a dimension table for the cities in the United States.
+
+| Table Name :: `cities`
+| - `city_id uuid` _uuid given for the city record_
+| - `city varchar` _city name_
+| - `state varchar` _state name_
+| - `state_code varchar` _state code_
+
+**airport_codes**
+
+This table will serve as a dimension table, providing the codes for airports in the united states.
+
+| Table Name :: `airport_codes`
+| - `id varchar` _identifier for the airport`
+| - `type varchar` _the type of airport_
+| - `name varchar` _the airport name_
+| - `elevation_ft float` _the elevation of the airport in feet_
+| - `continent varchar` _the continent of the airport_
+| - `iso_country varchar` _the country which the airport is in_
+| - `iso_region varchar` _the region which the aiport is in_
+| - `municipality varchar` _the municipality of the airport_
+| - `gps_code varchar` _the gps code for the airport`
+| - `iata_code varchar` _the iata code`
+| - `local_code varchar` _the local code used for the airport`
+| - `coordinates varchar` _the coordinates of the airport.
+
+
+
+
+
+
+
+
+
+
+
