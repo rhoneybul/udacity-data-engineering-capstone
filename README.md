@@ -64,7 +64,6 @@ The following data model was chosen;
 The following table will serve as the fact table. This gives a record of all the immigrations into the united states.
 
 | Table Name :: `immigrations`  
-| Columns  
 | - `ciid integer NOT NULL` _id for the immigration record, must be not null as to provide unique identifier_   
 | - `year integer` _year of immigration_  
 | - `month integer` _month of immigration_  
@@ -92,7 +91,6 @@ The following table will serve as the fact table. This gives a record of all the
 The following table gives the global temperatures over time. To simplify the data model we will have only average land temperature, minimum land temperature, and max land temperature.
 
 | Table Name :: `global_temperatures`   
-| Columns    
 | - `ts date` _date for the temperature record_    
 | - `average_temperature float` _average temperature_  
 | - `minimum_temperature float` _minimum temperature_  
@@ -103,7 +101,6 @@ The following table gives the global temperatures over time. To simplify the dat
 Since the source country for each immigration is given in country, we will just use the global temperature records based on country. A more granular data source would not provide any further value to the warehouse. We will use the average temperature only, as the uncertainty will not factor into the analysis performed on the warehouse. This will serve as a fact table.
 
 | Table Name :: `global_temperatures_countries`  
-| Columns  
 | - `ts date` _date for the temperature record_  
 | - `average_temperature float` _average temperature_  
 | - `country_code integer` _country_  
@@ -113,7 +110,6 @@ Since the source country for each immigration is given in country, we will just 
 The following table will serve as a dimension table for all the countries. 
 
 | Table Name :: `countries`  
-| Columns  
 | - `country_code integer` _country code_  
 | - `name varchar` _country name_  
 
@@ -122,7 +118,6 @@ The following table will serve as a dimension table for all the countries.
 This table will provide the demographics for each city, by country code in the United States. This will form the fact table for city based demographics. We will have a dimension table for the city information to prevent duplicated data.
 
 | Table Name :: `demographics`  
-| Columns  
 | - `city_id varchar` _city name_  
 | - `median_age integer` _median age_  
 | - `male_population integer` _males population in the city_  
@@ -167,9 +162,11 @@ This table will serve as a dimension table, providing the codes for airports in 
 The steps required to create the data pipeline, and load the data into the relevant tables is as follows;
 
 1. Create the relevant tables, dropping them first if they exist.
-2. Load in the relevant datasets.
-3. Create the cities, and countries dimension tables.
-4. 
+2. Load relevant data to populate the cities, and countries dimension tables.
+3. Load the data into the immigrations table, referencing the countries table when inserting.
+4. Load the data into the temperature tables, referencing the countries table when inserting.
+5. Load data into the demographic tables, referencing the cities table when inserting.
+6. Load data into the airtport codes table.
 
 
 
