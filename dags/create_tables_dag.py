@@ -2,6 +2,9 @@ from datetime import datetime, timedelta
 import os 
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
+from airflow.operators import (
+    CreateTableOperator
+)
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -38,4 +41,8 @@ finish_operator = PythonOperator(task_id='finish_execution',
                                  python_callable=finish_execution,
                                  dag=dag)
 
-start_operator >> finish_operator
+create_immigration = CreateTableOperator(task_id='create_immigration_table',
+                                         table_name='immmigrations',
+                                         dag=dag)
+
+start_operator >> create_immigration >> finish_operator

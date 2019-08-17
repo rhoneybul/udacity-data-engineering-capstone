@@ -16,7 +16,6 @@ class CreateTableOperator(BaseOperator):
                  # Example:
                  # conn_id = your-connection-name
                  table_name,
-                 create_table_statement,
                  redshift_conn_id='amazon-redshift',
                  *args, **kwargs):
 
