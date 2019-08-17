@@ -122,3 +122,13 @@ CREATE TABLE airport_codes (
 PRIMARY KEY (id)
 DISTSTYLE ALL;
 """
+
+create_statements = {
+    'immigrations': create_immigrations_table,
+    'global_temperatures': create_global_temperatures_table,
+    'global_temperatures_by_country': create_global_temperatures_by_country,
+    'countries': create_countries,
+    'demographics': create_demographics,
+    'cities': create_cities,
+    'airport_codes': create_airport_codes
+}
