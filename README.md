@@ -168,11 +168,19 @@ The steps required to create the data pipeline, and load the data into the relev
 5. Load data into the demographic tables, referencing the cities table when inserting.
 6. Load data into the airtport codes table.
 
+### Redshift Cluster
 
+To test the pipeline, I created a redshift cluster on AWS, in the `ap-southeast-2` region.
 
+I used a single node cluster.
 
+### Airflow Setup
 
+I chose to use airflow for the project. The reason I chose to use airflow, was to be able to create the data pipeline easily. On top of this, airflow offers strong observability over the pipeline. To get started with airflow, I used the docker compose file provided in the root of the project.
 
+To start airflow, you just need to run;
 
-
+```
+$ docker-compose up -d
+```
 
