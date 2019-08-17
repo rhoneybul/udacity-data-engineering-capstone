@@ -4,7 +4,7 @@ from airflow.utils.decorators import apply_defaults
 
 import logging
 
-from helpers.create_tables import drop_table_if_exists, create_statements
+from operators.helpers.create_table_statements import drop_table_if_exists, create_statements
 
 class CreateTableOperator(BaseOperator):
 
@@ -19,9 +19,8 @@ class CreateTableOperator(BaseOperator):
                  redshift_conn_id='amazon-redshift',
                  *args, **kwargs):
 
-        super(LoadDimensionOperator, self).__init__(*args, **kwargs)
+        super(CreateTableOperator, self).__init__(*args, **kwargs)
         self.table_name = table_name
-        self.create_table_statement = create_table_statement
         self.redshift_conn_id = redshift_conn_id
 
     def execute(self, context):
@@ -35,8 +34,13 @@ class CreateTableOperator(BaseOperator):
             redshift_hook.run(drop_table_command)
             logging.info('CreateTableOperator::Ran drop table if exists command.')
 
-            logging.info(f'CreateTableOperator::Running create table command::{create_statements[self.table_name]}')
-            redshift_hook.run(sql_load_statement)
+            logging.info(f'CreataeTableOperator::Choosing from Create Statements::{create_statements.keys()}')
+            logging.info(f'CreateTableOperator::Using Table Name::{self.table_name}')
+
+            table_command = create_statements[self.table_name]
+
+            logging.info(f'CreateTableOperator::Running create table command::{table_command}')
+            redshift_hook.run(table_command)
             logging.info(f'CreateTableOperator::Ran create table command.')
 
         except Exception as e:

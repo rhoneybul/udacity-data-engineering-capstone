@@ -16,7 +16,7 @@ create_immigrations_table = """
 CREATE TABLE immigrations (
     year INTEGER,
     month INTEGER,
-    country_code uuid,
+    country_code INTEGER,
     port VARCHAR,
     arrival_date timestamp,
     mode INTEGER,
@@ -36,8 +36,7 @@ CREATE TABLE immigrations (
     visa_type VARCHAR
 ) 
 DISTKEY (country_code) 
-SORTKEY (arrival_date) 
-DISTSTYLE KEY;
+SORTKEY (arrival_date);
 """
 
 ## create global temperatures table
@@ -49,8 +48,7 @@ CREATE TABLE global_temperatures (
     maximum_temperature FLOAT
 ) 
 DISTKEY (ts) 
-SORTKEY (ts)
-DISTSTYLE KEY;
+SORTKEY (ts);
 """
 
 
@@ -62,23 +60,21 @@ CREATE TABLE global_temperatures_by_country (
     country_code INTEGER
 )
 DISTKEY (ts)
-SORTKEY (ts)
-DISTSTYLE KEY;
+SORTKEY (ts);
 """
 
 create_countries = """
 CREATE TABLE countries (
     country_code INTEGER NOT NULL,
     name VARCHAR
+    PRIMARY KEY (country_code)
 )
-DISTKEY (country_code)
-PRIMARYKEY (country_code);
-DISTSTYLE KEY;
+DISTKEY (country_code);
 """
 
 create_demographics = """
 CREATE TABLE demographics (
-    city_id VARCHAR,
+    city_id INTEGER NOT NULL,
     median_age INTEGER,
     male_population INTEGER,
     female_population INTEGER,
@@ -88,20 +84,20 @@ CREATE TABLE demographics (
     average_household_size FLOAT,
     race VARCHAR,
     count INTEGER
+    PRIMARY KEY (city_id)
 )
-PRIMARY KEY (city_id)
-DISTSTYLE ALL;
+diststyle all;
 """
 
 create_cities = """
 CREATE TABLE cities (
-    city_id uuid NOT NULL,
+    city_id SERIAL NOT NULL,
     name VARCHAR,
     state VARCHAR,
     state_code VARCHAR
+    PRIMARY KEY (city_id)
 ) 
-PRIMARY KEY (city_id)
-DISTSTYLE ALL;
+diststyle all;
 """
 
 create_airport_codes = """
@@ -118,9 +114,9 @@ CREATE TABLE airport_codes (
     iata_code VARCHAR,
     local_code VARCHAR,
     coordinates VARCHAR
+    PRIMARY KEY (id)
 )
-PRIMARY KEY (id)
-DISTSTYLE ALL;
+diststyle all;
 """
 
 create_statements = {
