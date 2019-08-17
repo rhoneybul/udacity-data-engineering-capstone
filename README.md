@@ -61,15 +61,15 @@ The following data model was chosen;
 
 **immigrations**
 
-The following table will serve as the fact table. This gives a record of all the immigrations into the united states.
+The following table will serve as the fact table. This gives a record of all the immigrations into the united states. We are going to choose a key distribution, and the distribution key to be the country code. This is because we will have to create joins between immigrations and country information.
 
 | Table Name :: `immigrations`  
-| - `ciid integer NOT NULL` _id for the immigration record, must be not null as to provide unique identifier_   
+| - `ciid integer NOT NULL PRIMARY KEY` _id for the immigration record, must be not null as to provide unique identifier_   
 | - `year integer` _year of immigration_  
 | - `month integer` _month of immigration_  
-| - `country_code uuid` _source for immigration_  
+| - `country_code uuid DISTKEY` _source for immigration_  
 | - `port varchar` _port addmitted through_  
-| - `arrival_date date` _date of arrival_  
+| - `arrival_date timestamp SORT KEY` _date of arrival_  
 | - `mode integer` _mode of arrival_  
 | - `address varchar` _state of arrival_  
 | - `visa integer` _visa category_  
@@ -78,7 +78,7 @@ The following table will serve as the fact table. This gives a record of all the
 | - `arrival_flag varchar` _whether admitted or paroled into the US_  
 | - `departure_flag varchar` _whether departed, lost visa, or deceased_  
 | - `update_flag varchar` _update of visa, either apprehended, overstayed, or updated to PR_  
-| - `date_of_birth date` _date of birth_  
+| - `date_of_birth timestamp` _date of birth_  
 | - `gender varchar` _gender_  
 | - `ins_number varchar` _INS number_  
 | - `airline varchar` _airline which travelled on_  
@@ -88,37 +88,37 @@ The following table will serve as the fact table. This gives a record of all the
 
 **global_temperatures**
 
-The following table gives the global temperatures over time. To simplify the data model we will have only average land temperature, minimum land temperature, and max land temperature.
+The following table gives the global temperatures over time. To simplify the data model we will have only average land temperature, minimum land temperature, and max land temperature. We have chosen a key distribution, since this table will grow in size. The sort key is given by the date since we will want to query based on this column most frequently. 
 
 | Table Name :: `global_temperatures`   
-| - `ts date` _date for the temperature record_    
+| - `ts timestamp DIST KEY SORT KEY` _date for the temperature record_    
 | - `average_temperature float` _average temperature_  
 | - `minimum_temperature float` _minimum temperature_  
 | - `maximum_temperature float` _maximum temperature_  
 
 **global_temperatures_by_country**
 
-Since the source country for each immigration is given in country, we will just use the global temperature records based on country. A more granular data source would not provide any further value to the warehouse. We will use the average temperature only, as the uncertainty will not factor into the analysis performed on the warehouse. This will serve as a fact table.
+Since the source country for each immigration is given in country, we will just use the global temperature records based on country. A more granular data source would not provide any further value to the warehouse. We will use the average temperature only, as the uncertainty will not factor into the analysis performed on the warehouse. This will serve as a fact table. We have chosen a key distribution, We have chosen the country code to be the dist key, since this will distributed the data evenly. The date has been chosen as the sort key, since this will often be queried on.
 
 | Table Name :: `global_temperatures_countries`  
-| - `ts date` _date for the temperature record_  
+| - `ts date SORT KEY` _date for the temperature record_  
 | - `average_temperature float` _average temperature_  
-| - `country_code integer` _country_  
+| - `country_code integer DIST KEY` _country_  
 
 **countries**
 
-The following table will serve as a dimension table for all the countries. 
+The following table will serve as a dimension table for all the countries. Since we want to create joins between this table, and the immigrations table, we will use a key distribution, with the country code being the dist key
 
 | Table Name :: `countries`  
-| - `country_code integer` _country code_  
+| - `country_code integer NOT NULL PRIMARY KEY DISTKEY` _country code_  
 | - `name varchar` _country name_  
 
 **demographics**
 
-This table will provide the demographics for each city, by country code in the United States. This will form the fact table for city based demographics. We will have a dimension table for the city information to prevent duplicated data.
+This table will provide the demographics for each city, by country code in the United States. This will form the fact table for city based demographics. We will have a dimension table for the city information to prevent duplicated data. We have chosen an all distribution for this table, since it will have slowly changing dimensions, and not grow too large. 
 
 | Table Name :: `demographics`  
-| - `city_id varchar` _city name_  
+| - `city_id varchar NOT NULL PRIMARY KEY` _city name_  
 | - `median_age integer` _median age_  
 | - `male_population integer` _males population in the city_  
 | - `female_population integer` _female population in the city_  
@@ -131,20 +131,20 @@ This table will provide the demographics for each city, by country code in the U
 
 **cities**
 
-This table will provide a dimension table for the cities in the United States.
+This table will provide a dimension table for the cities in the United States. We have chosen an 'all' distribution for this table, since it will not grow too large. 
 
 | Table Name :: `cities`
-| - `city_id uuid UNIQUE` _uuid given for the city record_  
+| - `city_id uuid NOT NULL PRIMARY KEY` _uuid given for the city record_  
 | - `name varchar` _city name_  
 | - `state varchar` _state name_  
 | - `state_code varchar` _state code_  
 
 **airport_codes**
 
-This table will serve as a dimension table, providing the codes for airports in the united states.
+This table will serve as a dimension table, providing the codes for airports in the united states. We have chosen an 'all' distribution for this table, since it will not grow too large. 
 
 | Table Name :: `airport_codes`   
-| - `id varchar UNIQUE NOT NULL` _identifier for the airport_  
+| - `id varchar UNIQUE NOT NULL PRIMARY KEY` _identifier for the airport_  
 | - `type varchar` _the type of airport_  
 | - `name varchar` _the airport name_    
 | - `elevation_ft float` _the elevation of the airport in feet_  
