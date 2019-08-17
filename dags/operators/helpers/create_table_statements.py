@@ -13,7 +13,7 @@ def drop_table_if_exists(table_name):
 
 ## create immigrations table command.
 create_immigrations_table = """
-CREATE TABLE immigrations (
+CREATE TABLE IF NOT EXISTS immigrations (
     year INTEGER,
     month INTEGER,
     country_code INTEGER,
@@ -41,7 +41,7 @@ SORTKEY (arrival_date);
 
 ## create global temperatures table
 create_global_temperatures_table = """
-CREATE TABLE global_temperatures (
+CREATE TABLE IF NOT EXISTS global_temperatures (
     ts timestamp,
     average_temperature FLOAT,
     minimum_temperature FLOAT,
@@ -54,7 +54,7 @@ SORTKEY (ts);
 
 ## create global temperatures by country
 create_global_temperatures_by_country = """
-CREATE TABLE global_temperatures_by_country (
+CREATE TABLE IF NOT EXISTS global_temperatures_by_country (
     ts timestamp,
     average_temperature FLOAT,
     country_code INTEGER
@@ -64,16 +64,16 @@ SORTKEY (ts);
 """
 
 create_countries = """
-CREATE TABLE countries (
+CREATE TABLE IF NOT EXISTS countries (
     country_code INTEGER NOT NULL,
-    name VARCHAR
+    name VARCHAR,
     PRIMARY KEY (country_code)
 )
 DISTKEY (country_code);
 """
 
 create_demographics = """
-CREATE TABLE demographics (
+CREATE TABLE IF NOT EXISTS demographics (
     city_id INTEGER NOT NULL,
     median_age INTEGER,
     male_population INTEGER,
@@ -83,25 +83,25 @@ CREATE TABLE demographics (
     foreign_born INTEGER,
     average_household_size FLOAT,
     race VARCHAR,
-    count INTEGER
+    count INTEGER,
     PRIMARY KEY (city_id)
 )
 diststyle all;
 """
 
 create_cities = """
-CREATE TABLE cities (
-    city_id SERIAL NOT NULL,
+CREATE TABLE IF NOT EXISTS cities (
+    city_id INTEGER NOT NULL IDENTITY(0,1),
     name VARCHAR,
     state VARCHAR,
-    state_code VARCHAR
+    state_code VARCHAR,
     PRIMARY KEY (city_id)
 ) 
 diststyle all;
 """
 
 create_airport_codes = """
-CREATE TABLE airport_codes (
+CREATE TABLE IF NOT EXISTS airport_codes (
     id VARCHAR UNIQUE NOT NULL,
     type VARCHAR,
     name VARCHAR,
@@ -113,7 +113,7 @@ CREATE TABLE airport_codes (
     gps_code VARCHAR,
     iata_code VARCHAR,
     local_code VARCHAR,
-    coordinates VARCHAR
+    coordinates VARCHAR,
     PRIMARY KEY (id)
 )
 diststyle all;

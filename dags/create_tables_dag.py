@@ -46,12 +46,13 @@ global_temperatures = CreateTableOperator(task_id='create_global_temperatures',
                                           table_name='global_temperatures',
                                           dag=dag)
 
-global_temperatures_by_country = CreateTableOperator(task_id='create_global_temperatures_by_country'
+global_temperatures_by_country = CreateTableOperator(task_id='create_global_temperatures_by_country',
                                                      table_name='global_temperatures_by_country',
                                                      dag=dag)                                                                                 
 
 countries = CreateTableOperator(task_id='create_countries',
-                                table_name='countries')
+                                table_name='countries',
+                                dag=dag)
 
 demographics = CreateTableOperator(task_id='create_demographics',
                                    table_name='demographics',
