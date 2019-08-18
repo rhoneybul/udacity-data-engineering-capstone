@@ -14,6 +14,7 @@ def drop_table_if_exists(table_name):
 ## create immigrations table command.
 create_immigrations_table = """
 CREATE TABLE IF NOT EXISTS immigrations (
+    cicid  INTEGER NOT NULL,
     year INTEGER,
     month INTEGER,
     country_code INTEGER,
@@ -21,19 +22,23 @@ CREATE TABLE IF NOT EXISTS immigrations (
     arrival_date timestamp,
     mode INTEGER,
     address VARCHAR,
+    departure_date timestamp,
+    age INTEGER,
     visa INTEGER,
     count INTEGER,
     occupation VARCHAR,
     arrival_flag VARCHAR,
     departure_flag VARCHAR,
-    udpate_flag VARCHAR,
-    date_of_birth timestamp,
+    update_flag VARCHAR,
+    birth_year INTEGER,
+    date_allowed_to VARCHAR,
     gender VARCHAR,
     ins_number VARCHAR,
     airline VARCHAR,
     admission_number INTEGER NOT NULL UNIQUE,
     flight_number VARCHAR,
-    visa_type VARCHAR
+    visa_type VARCHAR,
+    PRIMARY KEY(cicid)
 ) 
 DISTKEY (country_code) 
 SORTKEY (arrival_date);

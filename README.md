@@ -64,25 +64,29 @@ The following data model was chosen;
 The following table will serve as the fact table. This gives a record of all the immigrations into the united states. We are going to choose a key distribution, and the distribution key to be the country code. This is because we will have to create joins between immigrations and country information.
 
 | Table Name :: `immigrations`  
-| - `ciid integer NOT NULL PRIMARY KEY` _id for the immigration record, must be not null as to provide unique identifier_   
+| - `cicid integer NOT NULL PRIMARY KEY` _id for the immigration record, must be not null as to provide unique identifier_   
 | - `year integer` _year of immigration_  
 | - `month integer` _month of immigration_  
-| - `country_code uuid DISTKEY` _source for immigration_  
-| - `port varchar` _port addmitted through_  
+| - `city varchar` _source city for immigration_  
+| - `country varchar` _source country for immigration_ 
+| - `port varchar` _port addmitted through_ 
 | - `arrival_date timestamp SORT KEY` _date of arrival_  
 | - `mode integer` _mode of arrival_  
-| - `address varchar` _state of arrival_  
-| - `visa integer` _visa category_  
+| - `address varchar` _state of arrival_ 
+| - `departure_date timestamp` _date of departure_
+| - `age integer` _age in years_
+| - `visa integer` _visa category_ 
 | - `count integer` _count, used for summary statistics_  
 | - `occupation varchar` _occupation_  
 | - `arrival_flag varchar` _whether admitted or paroled into the US_  
 | - `departure_flag varchar` _whether departed, lost visa, or deceased_  
 | - `update_flag varchar` _update of visa, either apprehended, overstayed, or updated to PR_  
-| - `date_of_birth timestamp` _date of birth_  
+| - `birth_year integer` _four digit year of birth_  
+| - `date_allowed_to VARCHAR` _character date field to when admitted in the US_
 | - `gender varchar` _gender_  
 | - `ins_number varchar` _INS number_  
 | - `airline varchar` _airline which travelled on_  
-| - `admission_number integer NOT NULL [UNIQUE]` _admission number, should be unique and not nullable_  
+| - `admission_number integer NOT NULL [UNIQUE]` _admission number, should be unique and not nullable_ 
 | - `flight_number varchar` _flight number travelled on_  
 | - `visa_type varchar` _visa type_  
 
@@ -187,4 +191,8 @@ $ docker-compose up -d
 ### Redshift Connection Configuration
 
 I then configured airflow to connection to redshift, by creating a `postgres` connection in the airflow dashboard.
+
+### Data Input
+
+The data inputs are csv files, and parquet files. To store the data for use with airflow, I added the `data` directory to the `/usr/local/data` directory in the airflow dockerfile, such that the operators could access it. 
 

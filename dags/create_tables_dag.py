@@ -4,6 +4,9 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 import pandas as pd
 from operators.create_tables import CreateTableOperator
+from operators.etl import ETLOperator
+from operators.helpers.read_dataframes import read_immigration_data
+from operators.helpers.clean_dfs import clean_immigration_data
 
 import logging
 
@@ -32,19 +35,6 @@ def begin_execution():
 def finish_execution():
     logging.info("Create Table Execution Completed.")
 
-def read_parquet():
-    data_path = '/usr/local/data/immigration-data'
-    parquet_files = os.listdir(data_path)
-
-    file_paths = [os.path.join(data_path, f) for f in parquet_files]
-
-    logging.info(f"ParquetFiles::Parquet file paths::{file_paths}")
-
-    for fp in file_paths:
-        df = pd.read_parquet(fp)
-        logging.info(f'ParquetFiles::Read parquet file')
-        logging.info(df.head())
-
 start_operator = PythonOperator(task_id='begin_execution',
                                 python_callable=begin_execution,
                                 dag=dag)
@@ -52,6 +42,12 @@ start_operator = PythonOperator(task_id='begin_execution',
 finish_operator = PythonOperator(task_id='finish_execution',
                                  python_callable=finish_execution,
                                  dag=dag)
+
+etl_immigration_data = ETLOperator(task_id='etl_immigration_data',
+                                   read_df=read_immigration_data,
+                                   clean_df=clean_immigration_data,
+                                   table_name='immigrations',
+                                   dag=dag)                                 
 
 # create_immigration = CreateTableOperator(task_id='create_immigration_table',
 #                                          table_name='immigrations',
@@ -81,11 +77,7 @@ finish_operator = PythonOperator(task_id='finish_execution',
 #                                     table_name='airport_codes',
 #                                     dag=dag)                             
 
-
-
-list_data_dir = PythonOperator(task_id='list-data-dir', python_callable=read_parquet, dag=dag)
-
-start_operator >> list_data_dir
+start_operator >> etl_immigration_data 
 
 # start_operator >> create_immigration >> finish_operator
 # start_operator >> global_temperatures >> finish_operator
