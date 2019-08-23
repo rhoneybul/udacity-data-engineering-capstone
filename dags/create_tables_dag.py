@@ -5,8 +5,8 @@ from airflow.operators.python_operator import PythonOperator
 import pandas as pd
 from operators.create_tables import CreateTableOperator
 from operators.etl import ETLOperator
-from operators.helpers.read_dataframes import read_immigration_data
-from operators.helpers.clean_dfs import clean_immigration_data
+import operators.helpers.read_dataframes import read_immigration_data, read_global_temperatures, read_global_temperatures_by_country, read_demographics, read_aiport_codes
+from operators.helpers.clean_dfs import clean_immigration_data, clean_global_temperatures, clean_global_temperatures_by_country, clean_demographics, clean_aiport_codes
 
 import logging
 
@@ -49,6 +49,31 @@ etl_immigration_data = ETLOperator(task_id='etl_immigration_data',
                                    table_name='immigrations',
                                    dag=dag)                                 
 
+etl_global_temperatures = ETLOperator(task_id='global_temperatures_data',
+                                      read_df=read_global_temperatures,
+                                      clean_df=clean_global_temperatures,
+                                      table_name='global_temperatures',
+                                      dag=dag)
+                                
+etl_global_temperatures_by_country = ETLOperator(task_id='global_temperatures_by_country_data',
+                                                 read_df=read_global_temperatures_by_country,
+                                                 clean_df=clean_global_temperatures_by_country,
+                                                 table_name='global_temperatures_by_country',
+                                                 dag=dag)
+                                                
+etl_demographics = ETLOperator(task_id='demographics_data',
+                               read_df=read_demographics,
+                               clean_df=clean_demographics,
+                               table_name='demographics',
+                               dag=dag)
+                    
+etl_airport_codes = ETLOperator(task_id='airport_codes_data',
+                                read_df=read_aiport_codes,
+                                clean_df=clean_aiport_codes,
+                                table_name='airport_codes',
+                                dag=dag)
+
+
 # create_immigration = CreateTableOperator(task_id='create_immigration_table',
 #                                          table_name='immigrations',
 #                                          dag=dag)
@@ -78,6 +103,10 @@ etl_immigration_data = ETLOperator(task_id='etl_immigration_data',
 #                                     dag=dag)                             
 
 start_operator >> etl_immigration_data 
+start_operator >> etl_global_temperatures
+start_operator >> etl_global_temperatures_by_country
+start_operator >> etl_demographics
+start_operator >> etl_airport_codes
 
 # start_operator >> create_immigration >> finish_operator
 # start_operator >> global_temperatures >> finish_operator
