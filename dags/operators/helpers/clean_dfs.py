@@ -1,5 +1,6 @@
 import os 
 import pandas as pd 
+import datetime
 
 import logging
 
@@ -54,3 +55,87 @@ def clean_immigration_data(df):
     immigration_data['dtaddto'] = pd.to_datetime(immigration_data['dtaddto'], format="%m%d%Y", errors='coerce')
 
     return df
+
+
+def clean_global_temperatures(global_temperatures):
+    """
+    cleans the global tempeatures dataframe. converts the 'ts'
+    column to datetime, and adds the correct column names.
+    parameters:
+        global_temperatures: pandas dataframe of global temperatures
+    returns:
+        global_temperatures: pandas dataframe, cleaned.
+    """
+
+    global_temperatures['ts'] = pd.to_datetime(global_temperatures['ts'], format="%Y-%m-%d")
+
+    global_temperatures.columns = ['ts', 
+                                   'average_temperature',
+                                   'minimum_temperature',
+                                   'maximum_temperature']
+
+    return global_temperatures
+
+def clean_global_temperatures_by_country(global_temperatures_by_country):
+    """
+    cleans the global temperatures by country dataframe. converts the ts 
+    column to a datetime object and names the columns appropriately
+    parameters:
+        global_temperatures_by_country: pandas dataframe of global_temperatures
+    returns:
+        global_temperatures_by_country: pandas dataframe oof global temperatures
+    """
+
+    global_temperatures_by_country = pd.to_datetime(global_temperatures_by_country['ts'], format="%Y-%m-%d")
+
+    global_temperatures_by_country.columns=['ts',
+                                            'average_temperature',
+                                            'country_code']
+
+    return global_temperatures_by_country
+
+def clean_demographics(demographics):
+    """
+    cleaned the demographics table. Added the relevant column names
+    parameters:
+        demographics: demographics pandas dataframe
+    returns:
+        demographics: demographics pandas dataframe
+    """
+
+    demographics.columns = ['city_id',
+                            'median_age',
+                            'male_population'
+                            'female_population',
+                            'total_population',
+                            'number_of_veterans',
+                            'foreign_born',
+                            'average_household_size',
+                            'race',
+                            'count']
+
+    return demographics
+
+def clean_airport_codes(airport_codes):
+    """
+    cleaned the airport codes. added the relevant column names
+    parameters:
+        airport_codes: pandas dataframe for airport codes
+    returns:
+        airport_codes: pandas dataframe for airport codes
+    """
+
+    airport_codes.columns = ['id',
+                             'type', 
+                             'name',
+                             'elevation_ft',
+                             'continent',
+                             'iso_country',
+                             'iso_region',
+                             'municipality',
+                             'gps_code',
+                             'iata_code',
+                             'local_code',
+                             'coordinates']
+
+    return airport_codes

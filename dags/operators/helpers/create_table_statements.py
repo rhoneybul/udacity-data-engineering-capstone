@@ -62,7 +62,7 @@ create_global_temperatures_by_country = """
 CREATE TABLE IF NOT EXISTS global_temperatures_by_country (
     ts timestamp,
     average_temperature FLOAT,
-    country_code INTEGER
+    country_code VARCHAR
 )
 DISTKEY (ts)
 SORTKEY (ts);
@@ -70,7 +70,7 @@ SORTKEY (ts);
 
 create_countries = """
 CREATE TABLE IF NOT EXISTS countries (
-    country_code INTEGER NOT NULL,
+    country_code VARCHAR NOT NULL,
     name VARCHAR,
     PRIMARY KEY (country_code)
 )

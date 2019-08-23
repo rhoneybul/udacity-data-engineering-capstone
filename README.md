@@ -107,7 +107,7 @@ Since the source country for each immigration is given in country, we will just 
 | Table Name :: `global_temperatures_countries`  
 | - `ts date SORT KEY` _date for the temperature record_  
 | - `average_temperature float` _average temperature_  
-| - `country_code integer DIST KEY` _country_  
+| - `country_code varchar DIST KEY` _country_  
 
 **countries**
 
