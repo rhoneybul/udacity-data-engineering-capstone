@@ -5,8 +5,9 @@ from airflow.operators.python_operator import PythonOperator
 import pandas as pd
 from operators.create_tables import CreateTableOperator
 from operators.etl import ETLOperator
-import operators.helpers.read_dataframes import read_immigration_data, read_global_temperatures, read_global_temperatures_by_country, read_demographics, read_aiport_codes
-from operators.helpers.clean_dfs import clean_immigration_data, clean_global_temperatures, clean_global_temperatures_by_country, clean_demographics, clean_aiport_codes
+from operators.create_dimensions import DimensionTableOperator
+from operators.helpers.read_dataframes import read_immigration_data, read_global_temperatures, read_global_temperatures_by_country, read_demographics, read_airport_codes
+from operators.helpers.clean_dfs import clean_immigration_data, clean_global_temperatures, clean_global_temperatures_by_country, clean_demographics, clean_airport_codes
 
 import logging
 
@@ -74,6 +75,14 @@ etl_airport_codes = ETLOperator(task_id='airport_codes_data',
                                 dag=dag)
 
 
+create_countries_dimension_table = DimensionTableOperator(task_id='create_countries_dimensions',
+                                                          sql_statement='select count(*) from global_temperatures',
+                                                          dag=dag)
+                                                    
+create_cities_dimension_table = DimensionTableOperator(task_id='create_cities_dimensions',
+                                                       sql_statement='select count(*) from global_temperatures',
+                                                       dag=dag)
+
 # create_immigration = CreateTableOperator(task_id='create_immigration_table',
 #                                          table_name='immigrations',
 #                                          dag=dag)
@@ -107,6 +116,12 @@ start_operator >> etl_global_temperatures
 start_operator >> etl_global_temperatures_by_country
 start_operator >> etl_demographics
 start_operator >> etl_airport_codes
+
+etl_global_temperatures >> create_countries_dimension_table
+etl_global_temperatures_by_country >> create_countries_dimension_table
+
+etl_demographics >> create_cities
+
 
 # start_operator >> create_immigration >> finish_operator
 # start_operator >> global_temperatures >> finish_operator
