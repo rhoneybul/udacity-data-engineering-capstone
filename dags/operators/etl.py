@@ -44,15 +44,15 @@ class ETLOperator(BaseOperator):
             logging.info(df.columns)
             logging.info(df.head())
 
-            # postgres_url = Variable.get(redshift_connection_var)
+            postgres_url = Variable.get(redshift_connection_var)
 
-            # logging.info(f"ETL Operator::Connecting to postgres DB on::{postgres_url}")
+            logging.info(f"ETL Operator::Connecting to postgres DB on::{postgres_url}")
 
-            # engine = create_engine(postgres_url)
+            engine = create_engine(postgres_url)
 
-            # df.to_sql(table_name, engine)
+            df.to_sql(table_name, engine)
 
-            # logging.info("ETL Operator::Wrote DataFrame to SQL.")
+            logging.info("ETL Operator::Wrote DataFrame to SQL.")
 
         except Exception as e:
             raise e
