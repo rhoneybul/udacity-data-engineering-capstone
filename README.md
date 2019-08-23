@@ -196,3 +196,14 @@ I then configured airflow to connection to redshift, by creating a `postgres` co
 
 The data inputs are csv files, and parquet files. To store the data for use with airflow, I added the `data` directory to the `/usr/local/data` directory in the airflow dockerfile, such that the operators could access it. 
 
+### Retrieving the data
+
+To retrieve the data, you will need to pull the data directory using the aws cli. 
+
+The data is stored in a public S3 bucket.
+
+The command to retrieve the relevant data is;
+
+```
+$ aws s3 cp --recursive s3://honeybulr-udacity-capstone/data data
+```
