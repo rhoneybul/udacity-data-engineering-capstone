@@ -129,7 +129,7 @@ create_airport_codes = CreateTableOperator(task_id='create_airport_codes',
                                            dag=dag)           
 
 check_immigration_records = EnsureRecords(task_id='ensure_immigration_recoreds',
-                                          table_name='immigration',
+                                          table_name='immigrations',
                                           dag=dag)
 
 check_global_temperature_records = EnsureRecords(task_id='ensure_global_temperature_records',
@@ -137,7 +137,7 @@ check_global_temperature_records = EnsureRecords(task_id='ensure_global_temperat
                                                  dag=dag)
 
 check_global_temperature_by_country_records = EnsureRecords(task_id='ensure_global_temperature_by_country_records',
-                                                            table_name='global_temperature_by_country_records',
+                                                            table_name='global_temperature_by_country',
                                                             dag=dag)
 
 check_country_records = EnsureRecords(task_id='ensure_country_records',
