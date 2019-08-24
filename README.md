@@ -161,7 +161,7 @@ This table will serve as a dimension table, providing the codes for airports in 
 | - `local_code varchar` _the local code used for the airport_  
 | - `coordinates varchar` _the coordinates of the airport_  
 
-#### Steps Required for Data Pipeline
+## Steps Required for Data Pipeline
 
 The steps required to create the data pipeline, and load the data into the relevant tables is as follows;
 
@@ -207,3 +207,34 @@ The command to retrieve the relevant data is;
 ```
 $ aws s3 cp --recursive s3://honeybulr-udacity-capstone/data data
 ```
+
+## Pipeline Steps and Operators
+
+The following outlines the steps, and corresponding operators associated with the data pipeline;
+
+### 1. Create Tables 
+
+This step is governed by the 'CreateTableOperator'. The operator is given a table name, and a redshift connection id. The create statements are exported by the 'create_table_statements' module in helpers. Given the table name, the sql statement is then returned, and the postgres hook executes the command.
+
+### 2. ETL 
+
+The ETL step then is responsible for extracting, transforming, and loading the data from disk to redshift. The data is stored in parquet, and .csv files. The ETL operators take three steps;
+
+1. Read dataframe. This is the function which returns the dataframe from the relevant source.
+2. Clean dataframe. This cleans the data frame appropriately. 
+3. Insert dataframe. This step inserts the dataframe into the redshift database.
+
+This step inserts data for the following tables;
+
+* immigrations
+* global_temperatures
+* global_temperatures_by_country
+* demographics
+* airport_codes
+
+### 3. Dimension Table Creation
+
+After the ETL processes have completed, we need to subsequently create the dimension tables. These use the 'CreateDimensionTable' operator. This will take a sql statement, that will create the relevant dimension tables, from the data inserted from the ETL process. This step creates the following tables;
+
+* cities
+* countries.

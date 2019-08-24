@@ -69,8 +69,8 @@ etl_demographics = ETLOperator(task_id='demographics_data',
                                dag=dag)
                     
 etl_airport_codes = ETLOperator(task_id='airport_codes_data',
-                                read_df=read_aiport_codes,
-                                clean_df=clean_aiport_codes,
+                                read_df=read_airport_codes,
+                                clean_df=clean_airport_codes,
                                 table_name='airport_codes',
                                 dag=dag)
 
@@ -83,50 +83,48 @@ create_cities_dimension_table = DimensionTableOperator(task_id='create_cities_di
                                                        sql_statement='select count(*) from global_temperatures',
                                                        dag=dag)
 
-# create_immigration = CreateTableOperator(task_id='create_immigration_table',
-#                                          table_name='immigrations',
-#                                          dag=dag)
+create_immigration = CreateTableOperator(task_id='create_immigration_table',
+                                         table_name='immigrations',
+                                         dag=dag)
 
-# global_temperatures = CreateTableOperator(task_id='create_global_temperatures',
-#                                           table_name='global_temperatures',
-#                                           dag=dag)
+create_global_temperatures = CreateTableOperator(task_id='create_global_temperatures',
+                                          table_name='global_temperatures',
+                                          dag=dag)
 
-# global_temperatures_by_country = CreateTableOperator(task_id='create_global_temperatures_by_country',
-#                                                      table_name='global_temperatures_by_country',
-#                                                      dag=dag)                                                                                 
+create_global_temperatures_by_country = CreateTableOperator(task_id='create_global_temperatures_by_country',
+                                                     table_name='global_temperatures_by_country',
+                                                     dag=dag)                                                                                 
 
-# countries = CreateTableOperator(task_id='create_countries',
-#                                 table_name='countries',
-#                                 dag=dag)
+create_countries = CreateTableOperator(task_id='create_countries',
+                                table_name='countries',
+                                dag=dag)
 
-# demographics = CreateTableOperator(task_id='create_demographics',
-#                                    table_name='demographics',
-#                                    dag=dag)
+create_demographics = CreateTableOperator(task_id='create_demographics',
+                                   table_name='demographics',
+                                   dag=dag)
 
-# cities = CreateTableOperator(task_id='create_cities',
-#                              table_name='cities',
-#                              dag=dag)                                                                                                                        
+create_cities = CreateTableOperator(task_id='create_cities',
+                             table_name='cities',
+                             dag=dag)                                                                                                                        
 
-# airport_codes = CreateTableOperator(task_id='create_airport_codes',
-#                                     table_name='airport_codes',
-#                                     dag=dag)                             
+create_airport_codes = CreateTableOperator(task_id='create_airport_codes',
+                                    table_name='airport_codes',
+                                    dag=dag)                             
 
-start_operator >> etl_immigration_data 
-start_operator >> etl_global_temperatures
-start_operator >> etl_global_temperatures_by_country
-start_operator >> etl_demographics
-start_operator >> etl_airport_codes
+start_operator >> create_immigration >> etl_immigration_data 
+start_operator >> create_global_temperatures >> etl_global_temperatures
+start_operator >> create_global_temperatures_by_country >> etl_global_temperatures_by_country
+start_operator >> create_demographics >> etl_demographics
+start_operator >> create_airport_codes >> etl_airport_codes
+start_operator >> create_countries >> create_countries_dimension_table
+start_operator >> create_cities >> create_cities_dimension_table
+
 
 etl_global_temperatures >> create_countries_dimension_table
 etl_global_temperatures_by_country >> create_countries_dimension_table
 
-etl_demographics >> create_cities
+etl_demographics >> create_cities_dimension_table
 
+## dimension table operators
 
-# start_operator >> create_immigration >> finish_operator
-# start_operator >> global_temperatures >> finish_operator
-# start_operator >> global_temperatures_by_country >> finish_operator
-# start_operator >> countries >> finish_operator
-# start_operator >> demographics >> finish_operator
-# start_operator >> cities >> finish_operator
-# start_operator >> airport_codes >> finish_operator
+## data quality checks

@@ -16,14 +16,13 @@ class DimensionTableOperator(BaseOperator):
                  # conn_id = your-connection-name
                  sql_statement,
                  redshift_conn_id='amazon-redshift',
-                 redshift_connection_var='amazon-redshift',
                  *args, **kwargs):
         """
         parameters:
         sql_statement: sql statement to execute to create the dimension table inserts
         """
 
-        super(DimensionOperator, self).__init__(*args, **kwargs)
+        super(DimensionTableOperator, self).__init__(*args, **kwargs)
         self.sql_statement = sql_statement
         self.redshift_conn_id = redshift_conn_id
 

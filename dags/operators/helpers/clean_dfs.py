@@ -47,12 +47,14 @@ def clean_immigration_data(df):
 
     logging.info('Cleaning datetime columns')
 
-    df = convert_sas_timestamp('arrdate', df)
-    df = convert_sas_timestamp('depdate', df)
+    df = convert_sas_timestamp('arrival_date', df)
+    df = convert_sas_timestamp('departure_ate', df)
 
-    immigration_data = immigration_data[immigration_data['dtaddto'].str.len() == 8]
+    immigration_data = immigration_data[immigration_data['date_allowed_to'].str.len() == 8]
 
-    immigration_data['dtaddto'] = pd.to_datetime(immigration_data['dtaddto'], format="%m%d%Y", errors='coerce')
+    immigration_data['date_allowed_to'] = pd.to_datetime(immigration_data['date_allowed_to'], 
+                                                         format="%m%d%Y",
+                                                         errors='coerce')
 
     return df
 
