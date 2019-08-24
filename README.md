@@ -67,8 +67,8 @@ The following table will serve as the fact table. This gives a record of all the
 | - `cicid integer NOT NULL PRIMARY KEY` _id for the immigration record, must be not null as to provide unique identifier_   
 | - `year integer` _year of immigration_  
 | - `month integer` _month of immigration_  
-| - `city varchar` _source city for immigration_  
-| - `country varchar` _source country for immigration_ 
+| - `city integer` _source city for immigration_  
+| - `country integer` _source country for immigration_ 
 | - `port varchar` _port addmitted through_ 
 | - `arrival_date timestamp SORT KEY` _date of arrival_  
 | - `mode integer` _mode of arrival_  
@@ -86,7 +86,7 @@ The following table will serve as the fact table. This gives a record of all the
 | - `gender varchar` _gender_  
 | - `ins_number varchar` _INS number_  
 | - `airline varchar` _airline which travelled on_  
-| - `admission_number integer NOT NULL [UNIQUE]` _admission number, should be unique and not nullable_ 
+| - `admission_number bigint NOT NULL [UNIQUE]` _admission number, should be unique and not nullable_ 
 | - `flight_number varchar` _flight number travelled on_  
 | - `visa_type varchar` _visa type_  
 
@@ -102,19 +102,19 @@ The following table gives the global temperatures over time. To simplify the dat
 
 **global_temperatures_by_country**
 
-Since the source country for each immigration is given in country, we will just use the global temperature records based on country. A more granular data source would not provide any further value to the warehouse. We will use the average temperature only, as the uncertainty will not factor into the analysis performed on the warehouse. This will serve as a fact table. We have chosen a key distribution, We have chosen the country code to be the dist key, since this will distributed the data evenly. The date has been chosen as the sort key, since this will often be queried on.
+Since the source country for each immigration is given in country, we will just use the global temperature records based on country. A more granular data source would not provide any further value to the warehouse. We will use the average temperature only, as the uncertainty will not factor into the analysis performed on the warehouse. This will serve as a fact table. We have chosen a key distribution, We have chosen the ts to be the dist key and the sort key, since this will distributed the data evenly and the data will often be queried on this.
 
 | Table Name :: `global_temperatures_countries`  
-| - `ts date SORT KEY` _date for the temperature record_  
+| - `ts timestamp SORT KEY DIST KEY` _date for the temperature record_  
 | - `average_temperature float` _average temperature_  
-| - `country_code varchar DIST KEY` _country_  
+| - `country varchar` _country_  
 
 **countries**
 
 The following table will serve as a dimension table for all the countries. We have chosen an 'all' distribution for the table, since it will not grow too large, by redshifts standards.
 
 | Table Name :: `countries`  
-| - `country_code integer NOT NULL PRIMARY KEY DISTKEY` _country code_  
+| - `country_id integer NOT NULL PRIMARY KEY IDENTITY(0.1)` _country code_  
 | - `name varchar` _country name_  
 
 **demographics**
@@ -133,12 +133,16 @@ This table will provide the demographics for each city, by country code in the U
 | - `race varchar` _race for the demographic statistic_  
 | - `count integer` _number of residens satisfying the relevant demographic_  
 
+| - `state varchar` _state of the record_
+
+| - `state_code varchar` _state code for the record_
+
 **cities**
 
 This table will provide a dimension table for the cities in the United States. We have chosen an 'all' distribution for this table, since it will not grow too large. 
 
 | Table Name :: `cities`
-| - `city_id uuid NOT NULL PRIMARY KEY` _uuid given for the city record_  
+| - `city_id integer NOT NULL PRIMARY KEY IDENTITY(0,1)` _city id which is given by the identity function_
 | - `name varchar` _city name_  
 | - `state varchar` _state name_  
 | - `state_code varchar` _state code_  
@@ -161,7 +165,9 @@ This table will serve as a dimension table, providing the codes for airports in 
 | - `local_code varchar` _the local code used for the airport_  
 | - `coordinates varchar` _the coordinates of the airport_  
 
-## Steps Required for Data Pipeline
+## 4. ETL 
+
+### Steps Required For Data Pipeline
 
 The steps required to create the data pipeline, and load the data into the relevant tables is as follows;
 
@@ -172,13 +178,13 @@ The steps required to create the data pipeline, and load the data into the relev
 5. Load data into the demographic tables, referencing the cities table when inserting.
 6. Load data into the airtport codes table.
 
-### Redshift Cluster
+#### Redshift Setup
 
 To test the pipeline, I created a redshift cluster on AWS, in the `ap-southeast-2` region.
 
 I used a single node cluster.
 
-### Airflow Setup
+#### Airflow Setup
 
 I chose to use airflow for the project. The reason I chose to use airflow, was to be able to create the data pipeline easily. On top of this, airflow offers strong observability over the pipeline. To get started with airflow, I used the docker compose file provided in the root of the project.
 
@@ -188,15 +194,15 @@ To start airflow in the background, you just need to run;
 $ docker-compose up -d
 ```
 
-### Redshift Connection Configuration
+#### Configure Redshift Connection
 
 I then configured airflow to connection to redshift, by creating a `postgres` connection in the airflow dashboard.
 
-### Data Input
+#### Data Input
 
 The data inputs are csv files, and parquet files. To store the data for use with airflow, I added the `data` directory to the `/usr/local/data` directory in the airflow dockerfile, such that the operators could access it. 
 
-### Retrieving the data
+#### Retrieving the Data 
 
 To retrieve the data, you will need to pull the data directory using the aws cli. 
 
@@ -208,21 +214,21 @@ The command to retrieve the relevant data is;
 $ aws s3 cp --recursive s3://honeybulr-udacity-capstone/data data
 ```
 
-## Pipeline Steps and Operators
+### ETL Steps
 
 The following outlines the steps, and corresponding operators associated with the data pipeline;
 
-### 1. Create Tables 
+#### 1. Create Tables 
 
 This step is governed by the 'CreateTableOperator'. The operator is given a table name, and a redshift connection id. The create statements are exported by the 'create_table_statements' module in helpers. Given the table name, the sql statement is then returned, and the postgres hook executes the command.
 
-### 2. ETL 
+#### 2. ETL
 
 The ETL step then is responsible for extracting, transforming, and loading the data from disk to redshift. The data is stored in parquet, and .csv files. The ETL operators take three steps;
 
 1. Read dataframe. This is the function which returns the dataframe from the relevant source.
-2. Clean dataframe. This cleans the data frame appropriately. 
-3. Insert dataframe. This step inserts the dataframe into the redshift database.
+2. Clean dataframe. This cleans the data frame appropriately. This will remove the unneccessary columns, add the correct column names, change timestamp columns, and remove unneccessary duplications.
+3. Insert dataframe. This step inserts the dataframe into the redshift database. This uses the pandas `df.to_sql` function.
 
 This step inserts data for the following tables;
 
@@ -232,19 +238,91 @@ This step inserts data for the following tables;
 * demographics
 * airport_codes
 
-### 3. Dimension Table Creation
+#### 3. Dimension Table Creation
 
 After the ETL processes have completed, we need to subsequently create the dimension tables. These use the 'CreateDimensionTable' operator. This will take a sql statement, that will create the relevant dimension tables, from the data inserted from the ETL process. This step creates the following tables;
 
 * cities
 * countries
 
-### 4. Data Quality Checks
+#### 4. Data Quality Checks
 
 The following ensures that the data has been inserted correctly. 
 
 We will use a data quality check for every table to ensure data was inserted.
 
-Hence, we will use the 'DataExistence' Operator, which ensures that for a given 'table_name', there exists records. 
+Hence, we will use the 'EnsureRecords' Operator, which ensures that for a given 'table_name', there exists records. 
 
-Subsequently, we will ensure for the immigrations, and demographics tables, that we have data uniqueness. For a given 'table_name', and 'column', we can verify that when grouped by that particular column, there exists the same number of records. This will prove that we are inserting unique records into the database. 
+Subsequently, we will ensure for the immigrations, airport_codes, cities and countries tables, that we have data uniqueness. For a given 'table_name', and 'column', we can verify that when grouped by that particular column, there exists the same number of records. This will prove that we are inserting unique records into the database. 
+
+
+
+## 5. Project Write Up
+
+### Project goal
+
+The goal of the project was to create a data warehouse, with data relevant to immigration to the United States. This would include records of immigration, global temperatures over time, and demographics for the cities. We would want to run queries against the database, to extract data relating to the temperature factors which influenced particular migrations to the United States. We would want to query the warehouse to determine the particular regions which was popular for immigration, and which demographic factors were determined to strongly influence immigration to that location.
+
+The model chosen was to create fact records for the immigration to the United States, temperatures, and demographics. As well as this, the model included dimension tables for cities and countries. This is because, this is the main dimensions we would wish to query against. We want to determine correlations between countries, and particular temperatures, as well as cities, and relevant demographics. 
+
+We chose to use key distributions for immigrations, global_temperatures, and global_temperatures_by_country. This is due to the fact that these tables may be large, and we will want to query heavily against these. The other tables were given an all distribution, since they would not grow to the same extent, a key distribution was not neccessary.
+
+With regards to spark and airflow, airflow was chosen to orchestrate the data pipeline. This tool was used, since it enables us to create strong observability over the data pipeline, and to ensure dependency on all tasks. Spark was not used, as the overhead for creating a spark cluster was not deemed necessary.
+
+### Tools & Technologies
+
+* Redshift - I used redshift, since this is a scalable data warehouse system. It is very easy to create, and manage, with strong observability. We are able to easily connect to this system with python, and if the quantity of data is large, we are able to scale the database horizontally, as well as vertically to deal with greater loading.
+* Airflow - I used airflow, since this is a strong tool for creating pipelines with dependencies, and strong observability over the system. I was able to create a DAG to visualise the process which the pipeline would go through, and track errors, and successes of the pipeline. 
+
+### Process Steps
+
+The steps which I went through to complete the project was as follows;
+
+* Download all the relevant data, from the sources provided.
+
+* Use a jupyter notebook, to investigate the data, for the columns present in each data, the length, and how to convert the relevant timestamps. Data explorations can be observed in `./UdacityDendCapstone.ipynb`
+
+* Set up airflow, using docker compose. The docker compose file is in `./docker-compose.yaml` To start this, you just need to run `$ docker-compose up -d`. This should start the relevant postgres database, and the webserver on `localhost:8000`. 
+
+* Created a RedShift Cluster, in AWS, in the sydney region.
+
+* Created a `Variable` for the Redshift connection, and a `Connection` for the connection to Redshift.
+
+* Added the `Create Tables` operators, create table sql statements.
+
+* Added the ETL operators.
+
+* Added the data quality operators. 
+
+* Created the DAG in airflow.
+
+* Ran the DAG, and ensured the data quality operators, the ETL steps, and the create table steps were all successful.
+
+  
+
+### Data Updates
+
+The data should be updated as follows;
+
+* Immigrations: Daily if possible, since this data source will be changing rapidly. Updating this daily will make sure the data is up to date.
+* Global Temperatures: Every month, since the records are available in monthly steps.
+* Demographics: Every year, as this information will only update every year.
+* Airport Codes: Every year, as this information will change very infrequently.
+
+
+
+### Scenario Handling
+
+#### Data Increased by 100x
+
+If the data increased, I would use a higher spec redshift cluster. I set up a single node redshift cluster, and if the data was to increase by this quantity, we would require greater specifications to ensure the data was able to be queried quickly. I would also use spark for reading the input data, as the data increasing by this quantity would mean the ETL process would take a significant quanity of time.
+
+#### Pipelines to be run at 7am
+
+If the pipelines were required to be run at 7am every day, I would add an airflow schedule to enable this. This would then trigger the ETL pipeline to be run. I would add slack integrations, to notify users when the pipeline failed, such that relevant people could attend to the failure. I would also enable retries, to ensure that the failure wasn't due to servers being temporarily unavailable.
+
+#### Database accessed by 100+ people
+
+I would use a higher spec redshift cluster as well, to ensure the loading that would be placed on the database would be handled appropriately. I would add RBAC to the redshift database, to ensure that only certain users were able to perform operations that could comprise the database. I would write an API on top of the warehouse, such that users were able to query common queries easily, over rest. I would enable metrics, monitoring and alerting on the database, such that if there was any downtime, I would be able to attend to the issue.
+
+ 
