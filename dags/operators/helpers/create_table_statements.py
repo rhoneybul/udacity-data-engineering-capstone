@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS immigrations (
     cicid  INTEGER NOT NULL,
     year INTEGER,
     month INTEGER,
-    country_code INTEGER,
+    city INTEGER,
+    country INTEGER,
     port VARCHAR,
     arrival_date timestamp,
     mode INTEGER,
@@ -79,7 +80,7 @@ DISTKEY (country_code);
 
 create_demographics = """
 CREATE TABLE IF NOT EXISTS demographics (
-    city_id INTEGER NOT NULL,
+    city VARCHAR NOT NULL,
     median_age INTEGER,
     male_population INTEGER,
     female_population INTEGER,
@@ -89,7 +90,9 @@ CREATE TABLE IF NOT EXISTS demographics (
     average_household_size FLOAT,
     race VARCHAR,
     count INTEGER,
-    PRIMARY KEY (city_id)
+    state VARCHAR,
+    state_code VARCHAR,
+    PRIMARY KEY (city)
 )
 diststyle all;
 """

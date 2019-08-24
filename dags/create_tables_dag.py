@@ -48,30 +48,35 @@ etl_immigration_data = ETLOperator(task_id='etl_immigration_data',
                                    read_df=read_immigration_data,
                                    clean_df=clean_immigration_data,
                                    table_name='immigrations',
+                                   write_subset=True,
                                    dag=dag)                                 
 
 etl_global_temperatures = ETLOperator(task_id='global_temperatures_data',
                                       read_df=read_global_temperatures,
                                       clean_df=clean_global_temperatures,
                                       table_name='global_temperatures',
+                                      write_subset=True,
                                       dag=dag)
                                 
 etl_global_temperatures_by_country = ETLOperator(task_id='global_temperatures_by_country_data',
                                                  read_df=read_global_temperatures_by_country,
                                                  clean_df=clean_global_temperatures_by_country,
                                                  table_name='global_temperatures_by_country',
+                                                 write_subset=True,
                                                  dag=dag)
                                                 
 etl_demographics = ETLOperator(task_id='demographics_data',
                                read_df=read_demographics,
                                clean_df=clean_demographics,
                                table_name='demographics',
+                               write_subset=True,
                                dag=dag)
                     
 etl_airport_codes = ETLOperator(task_id='airport_codes_data',
                                 read_df=read_airport_codes,
                                 clean_df=clean_airport_codes,
                                 table_name='airport_codes',
+                                write_subset=True,
                                 dag=dag)
 
 
@@ -88,28 +93,28 @@ create_immigration = CreateTableOperator(task_id='create_immigration_table',
                                          dag=dag)
 
 create_global_temperatures = CreateTableOperator(task_id='create_global_temperatures',
-                                          table_name='global_temperatures',
-                                          dag=dag)
+                                                 table_name='global_temperatures',
+                                                 dag=dag)
 
 create_global_temperatures_by_country = CreateTableOperator(task_id='create_global_temperatures_by_country',
-                                                     table_name='global_temperatures_by_country',
-                                                     dag=dag)                                                                                 
+                                                            table_name='global_temperatures_by_country',
+                                                            dag=dag)                                                                                 
 
 create_countries = CreateTableOperator(task_id='create_countries',
-                                table_name='countries',
-                                dag=dag)
+                                       table_name='countries',
+                                       dag=dag)
 
 create_demographics = CreateTableOperator(task_id='create_demographics',
-                                   table_name='demographics',
-                                   dag=dag)
+                                          table_name='demographics',
+                                          dag=dag)
 
 create_cities = CreateTableOperator(task_id='create_cities',
-                             table_name='cities',
-                             dag=dag)                                                                                                                        
+                                    table_name='cities',
+                                    dag=dag)                                                                                                                        
 
 create_airport_codes = CreateTableOperator(task_id='create_airport_codes',
-                                    table_name='airport_codes',
-                                    dag=dag)                             
+                                           table_name='airport_codes',
+                                           dag=dag)                             
 
 start_operator >> create_immigration >> etl_immigration_data 
 start_operator >> create_global_temperatures >> etl_global_temperatures

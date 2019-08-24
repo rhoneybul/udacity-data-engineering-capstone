@@ -17,6 +17,7 @@ class ETLOperator(BaseOperator):
                  table_name,
                  read_df,
                  clean_df,
+                 write_subset=False,
                  redshift_conn_id='amazon-redshift',
                  redshift_connection_var='amazon-redshift',
                  *args, **kwargs):
@@ -30,6 +31,7 @@ class ETLOperator(BaseOperator):
         self.table_name = table_name
         self.read_df = read_df
         self.clean_df = clean_df
+        self.write_subset= write_subset
         self.redshift_conn_id = redshift_conn_id
         self.redshift_connection_var = redshift_connection_var
 
@@ -51,7 +53,12 @@ class ETLOperator(BaseOperator):
 
             engine = create_engine(postgres_url)
 
-            df.to_sql(table_name, engine)
+            if self.write_subset:
+                df = df.iloc[0:10]
+
+            print(f'Writing::{len(df)} rows.')
+
+            df.to_sql(self.table_name, engine, if_exists='append', index=False)
 
             logging.info("ETL Operator::Wrote DataFrame to SQL.")
 

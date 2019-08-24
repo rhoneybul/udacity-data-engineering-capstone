@@ -71,10 +71,18 @@ def clean_global_temperatures(global_temperatures):
 
     global_temperatures['dt'] = pd.to_datetime(global_temperatures['dt'], format="%Y-%m-%d")
 
+    global_temperatures.drop(['LandMaxTemperatureUncertainty', 
+                              'LandAverageTemperatureUncertainty', 
+                              'LandMinTemperatureUncertainty', 
+                              'LandAndOceanAverageTemperature',
+                              'LandAndOceanAverageTemperatureUncertainty'], inplace=True, axis=1)
+
+    logging.info(f'GlobalTemperaturesColumns::{global_temperatures.columns}')
+
     global_temperatures.columns = ['ts', 
-                                   'average_temperature',
-                                   'minimum_temperature',
-                                   'maximum_temperature']
+                                  'average_temperature',
+                                  'maximum_temperature',
+                                  'minimum_temperature']
 
     return global_temperatures
 
@@ -89,6 +97,10 @@ def clean_global_temperatures_by_country(global_temperatures_by_country):
     """
 
     global_temperatures_by_country['dt'] = pd.to_datetime(global_temperatures_by_country['dt'], format="%Y-%m-%d")
+
+    global_temperatures_by_country.drop(['AverageTemperatureUncertainty'], inplace=True, axis=1)
+
+    logging.info(f'GlobalTemperaturesByCountry::{global_temperatures_by_country.columns}')
 
     global_temperatures_by_country.columns=['ts',
                                             'average_temperature',
@@ -105,10 +117,12 @@ def clean_demographics(demographics):
         demographics: demographics pandas dataframe
     """
 
+    logging.info(f'DemographicsColumns::{demographics.columns}')
+
     demographics.columns = ['city',
                             'state',
                             'median_age',
-                            'male_population'
+                            'male_population',
                             'female_population',
                             'total_population',
                             'number_of_veterans',
