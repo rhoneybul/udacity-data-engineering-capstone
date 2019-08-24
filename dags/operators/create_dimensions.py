@@ -31,7 +31,7 @@ class DimensionTableOperator(BaseOperator):
         try:
             logging.info("Dimension Operator::Creating Dimension Tables")
 
-            conn = PostgresHook(conn_id=self.redshift_conn_id).get_conn()
+            conn = PostgresHook(self.redshift_conn_id).get_conn()
 
             logging.info(f"Dimension Operator::Executing Dimension Query::{self.sql_statement}")
 

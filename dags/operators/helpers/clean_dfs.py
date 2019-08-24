@@ -104,7 +104,7 @@ def clean_global_temperatures_by_country(global_temperatures_by_country):
 
     global_temperatures_by_country.columns=['ts',
                                             'average_temperature',
-                                            'country_code']
+                                            'country']
 
     return global_temperatures_by_country
 

@@ -79,13 +79,22 @@ etl_airport_codes = ETLOperator(task_id='airport_codes_data',
                                 write_subset=True,
                                 dag=dag)
 
+create_countries_sql = """
+insert into countries (name)
+select distinct country from global_temperatures_by_country;
+"""
 
 create_countries_dimension_table = DimensionTableOperator(task_id='create_countries_dimensions',
                                                           sql_statement='select count(*) from global_temperatures',
                                                           dag=dag)
                                                     
+create_cities_sql = """
+insert into cities (state_code, state, name)
+select distinct state_code, state, name from demographics;
+"""                                                    
+
 create_cities_dimension_table = DimensionTableOperator(task_id='create_cities_dimensions',
-                                                       sql_statement='select count(*) from global_temperatures',
+                                                       sql_statement=create_cities_sql,
                                                        dag=dag)
 
 create_immigration = CreateTableOperator(task_id='create_immigration_table',

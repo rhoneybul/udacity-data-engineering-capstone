@@ -34,7 +34,7 @@ class CreateTableOperator(BaseOperator):
             redshift_hook.run(drop_table_command)
             logging.info('CreateTableOperator::Ran drop table if exists command.')
 
-            logging.info(f'CreataeTableOperator::Choosing from Create Statements::{create_statements.keys()}')
+            logging.info(f'CreateTableOperator::Choosing from Create Statements::{create_statements.keys()}')
             logging.info(f'CreateTableOperator::Using Table Name::{self.table_name}')
 
             table_command = create_statements[self.table_name]

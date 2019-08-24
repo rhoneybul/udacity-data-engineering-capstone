@@ -36,12 +36,12 @@ CREATE TABLE IF NOT EXISTS immigrations (
     gender VARCHAR,
     ins_number VARCHAR,
     airline VARCHAR,
-    admission_number INTEGER NOT NULL UNIQUE,
+    admission_number BIGINT NOT NULL UNIQUE,
     flight_number VARCHAR,
     visa_type VARCHAR,
     PRIMARY KEY(cicid)
 ) 
-DISTKEY (country_code) 
+DISTKEY (country) 
 SORTKEY (arrival_date);
 """
 
@@ -63,7 +63,7 @@ create_global_temperatures_by_country = """
 CREATE TABLE IF NOT EXISTS global_temperatures_by_country (
     ts timestamp,
     average_temperature FLOAT,
-    country_code VARCHAR
+    country VARCHAR
 )
 DISTKEY (ts)
 SORTKEY (ts);
@@ -71,9 +71,9 @@ SORTKEY (ts);
 
 create_countries = """
 CREATE TABLE IF NOT EXISTS countries (
-    country_code VARCHAR NOT NULL,
+    country_id INTEGER NOT NULL IDENTITY(0,1),
     name VARCHAR,
-    PRIMARY KEY (country_code)
+    PRIMARY KEY (country_id)
 )
 DISTKEY (country_code);
 """
