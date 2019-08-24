@@ -52,6 +52,8 @@ def clean_immigration_data(df):
 
     df = df[df['date_allowed_to'].str.len() == 8]
 
+    df = df.drop_duplicates('admission_number')
+
     df['date_allowed_to'] = pd.to_datetime(df['date_allowed_to'], 
                                            format="%m%d%Y",
                                            errors='coerce')

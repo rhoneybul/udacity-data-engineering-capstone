@@ -38,16 +38,16 @@ class EnsureDistinctRecords(BaseOperator):
 
             total_count = cursor.fetchone()
 
-            logging.info("Total Count::{total_count}")
+            logging.info(f"Total Count::{total_count}")
 
             cursor.execute(f'select count (distinct {self.distinct_column}) from {self.table_name}')
 
             unique_count = cursor.fetchone()
 
-            logging.info("Unique Count::{unique_count}")
+            logging.info(f"Unique Count::{unique_count}")
 
             if total_count != unique_count:
-                raise Error("Total count does not match unique count. Invalid duplicate records.")
+                raise Exception("Total count does not match unique count. Invalid duplicate records.")
 
             conn.commit()
 

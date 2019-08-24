@@ -93,7 +93,7 @@ create_countries_dimension_table = DimensionTableOperator(task_id='create_countr
                                                     
 create_cities_sql = """
 insert into cities (state_code, state, name)
-select distinct state_code, state, city from demographics;
+select state_code, state, city from demographics group by state_code, state, city;
 """                                                    
 
 create_cities_dimension_table = DimensionTableOperator(task_id='create_cities_dimensions',
@@ -137,7 +137,7 @@ check_global_temperature_records = EnsureRecords(task_id='ensure_global_temperat
                                                  dag=dag)
 
 check_global_temperature_by_country_records = EnsureRecords(task_id='ensure_global_temperature_by_country_records',
-                                                            table_name='global_temperature_by_country',
+                                                            table_name='global_temperatures_by_country',
                                                             dag=dag)
 
 check_country_records = EnsureRecords(task_id='ensure_country_records',
@@ -158,17 +158,17 @@ check_airport_codes = EnsureRecords(task_id='check_aiport_codes',
 
 check_immigration_distinct_records = EnsureDistinctRecords(task_id='check_distinct_immigration_records',
                                                            table_name='immigrations',
-                                                           distinct_column='ins_number',
+                                                           distinct_column='admission_number',
                                                            dag=dag)
 
 check_cities_distinct_records = EnsureDistinctRecords(task_id='check_distinct_city_records',
                                                       table_name='cities',
-                                                      distinct_column='name',
+                                                      distinct_column='city_id',
                                                       dag=dag)     
 
 check_countries_distinct_records = EnsureDistinctRecords(task_id='check_distinct_country_records',
                                                          table_name='countries',
-                                                         distinct_column='name',
+                                                         distinct_column='country_id',
                                                          dag=dag)
 
 check_airport_codes_distinct_records = EnsureDistinctRecords(task_id='check_airport_codes_distinct_records',

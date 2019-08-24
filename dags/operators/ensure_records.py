@@ -36,10 +36,10 @@ class EnsureRecords(BaseOperator):
 
             total_count = cursor.fetchone()
 
-            logging.info("Total Count::{total_count}")
+            logging.info(f"Total Count::{total_count}")
 
             if total_count == 0:
-                raise Error(f"There are no records for table::{self.table_name}")
+                raise Exception(f"There are no records for table::{self.table_name}")
 
             conn.commit()
 
