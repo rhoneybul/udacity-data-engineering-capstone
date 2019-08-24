@@ -42,7 +42,8 @@ def read_global_temperatures():
 
     global_temperatures = pd.read_csv(data_path)
 
-    logging.info(f'Reading Global Temperatures::{global_temperatures.head()}')
+    logging.info(f'Read Global Temperatures::{global_temperatures.head()}')
+    logging.info(f'Global Temperatures Columns::{global_temperatures.columns}')
 
     return global_temperatures
 
@@ -54,7 +55,7 @@ def read_global_temperatures_by_country():
         temperatures by country.
     """
 
-    data_path = "/usr/local/data/climate-change/GlobalTemperaturesByCountry.csv"
+    data_path = "/usr/local/data/climate-change/GlobalLandTemperaturesByCountry.csv"
 
     global_temperatures_by_country = pd.read_csv(data_path)
 
@@ -67,11 +68,12 @@ def read_demographics():
         demographics: pandas dataframe of demographics
     """
 
-    data_path = "/usr/local/demographics/us-cities-demographics.csv"
+    data_path = "/usr/local/data/demographics/us-cities-demographics.csv"
 
-    demographics = pd.read_csv(data_path)
+    demographics = pd.read_csv(data_path, delimiter=';')
 
     logging.info(f'Read Demographics::{demographics.head()}')
+    logging.info(f'Demographics Columns::{demographics.columns}')
 
     return demographics
 
@@ -82,7 +84,7 @@ def read_airport_codes():
         airport_codes: pandas dataframe of airport codes
     """
 
-    data_path = "/usr/local/airport-codes_csv.csv"
+    data_path = "/usr/local/data/airport-codes/airport-codes_csv.csv"
 
     airport_codes = pd.read_csv(data_path)
 

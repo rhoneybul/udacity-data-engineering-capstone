@@ -1,5 +1,5 @@
 from airflow.hooks.postgres_hook import PostgresHook
-from airflow.models import BaseOperator
+from airflow.models import BaseOperator, Variable
 from airflow.utils.decorators import apply_defaults
 
 from sqlalchemy import create_engine
@@ -31,6 +31,7 @@ class ETLOperator(BaseOperator):
         self.read_df = read_df
         self.clean_df = clean_df
         self.redshift_conn_id = redshift_conn_id
+        self.redshift_connection_var = redshift_connection_var
 
     def execute(self, context):
         # self.log.info('LoadDimensionOperator not implemented yet')
@@ -44,7 +45,7 @@ class ETLOperator(BaseOperator):
             logging.info(df.columns)
             logging.info(df.head())
 
-            postgres_url = Variable.get(redshift_connection_var)
+            postgres_url = Variable.get(self.redshift_connection_var)
 
             logging.info(f"ETL Operator::Connecting to postgres DB on::{postgres_url}")
 

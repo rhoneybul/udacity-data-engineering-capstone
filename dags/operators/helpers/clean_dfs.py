@@ -48,13 +48,13 @@ def clean_immigration_data(df):
     logging.info('Cleaning datetime columns')
 
     df = convert_sas_timestamp('arrival_date', df)
-    df = convert_sas_timestamp('departure_ate', df)
+    df = convert_sas_timestamp('departure_date', df)
 
-    immigration_data = immigration_data[immigration_data['date_allowed_to'].str.len() == 8]
+    df = df[df['date_allowed_to'].str.len() == 8]
 
-    immigration_data['date_allowed_to'] = pd.to_datetime(immigration_data['date_allowed_to'], 
-                                                         format="%m%d%Y",
-                                                         errors='coerce')
+    df['date_allowed_to'] = pd.to_datetime(df['date_allowed_to'], 
+                                           format="%m%d%Y",
+                                           errors='coerce')
 
     return df
 
@@ -69,7 +69,7 @@ def clean_global_temperatures(global_temperatures):
         global_temperatures: pandas dataframe, cleaned.
     """
 
-    global_temperatures['ts'] = pd.to_datetime(global_temperatures['ts'], format="%Y-%m-%d")
+    global_temperatures['dt'] = pd.to_datetime(global_temperatures['dt'], format="%Y-%m-%d")
 
     global_temperatures.columns = ['ts', 
                                    'average_temperature',
@@ -88,7 +88,7 @@ def clean_global_temperatures_by_country(global_temperatures_by_country):
         global_temperatures_by_country: pandas dataframe oof global temperatures
     """
 
-    global_temperatures_by_country = pd.to_datetime(global_temperatures_by_country['ts'], format="%Y-%m-%d")
+    global_temperatures_by_country['dt'] = pd.to_datetime(global_temperatures_by_country['dt'], format="%Y-%m-%d")
 
     global_temperatures_by_country.columns=['ts',
                                             'average_temperature',
@@ -105,7 +105,8 @@ def clean_demographics(demographics):
         demographics: demographics pandas dataframe
     """
 
-    demographics.columns = ['city_id',
+    demographics.columns = ['city',
+                            'state',
                             'median_age',
                             'male_population'
                             'female_population',
@@ -113,6 +114,7 @@ def clean_demographics(demographics):
                             'number_of_veterans',
                             'foreign_born',
                             'average_household_size',
+                            'state_code',
                             'race',
                             'count']
 

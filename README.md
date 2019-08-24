@@ -237,4 +237,14 @@ This step inserts data for the following tables;
 After the ETL processes have completed, we need to subsequently create the dimension tables. These use the 'CreateDimensionTable' operator. This will take a sql statement, that will create the relevant dimension tables, from the data inserted from the ETL process. This step creates the following tables;
 
 * cities
-* countries.
+* countries
+
+### 4. Data Quality Checks
+
+The following ensures that the data has been inserted correctly. 
+
+We will use a data quality check for every table to ensure data was inserted.
+
+Hence, we will use the 'DataExistence' Operator, which ensures that for a given 'table_name', there exists records. 
+
+Subsequently, we will ensure for the immigrations, and demographics tables, that we have data uniqueness. For a given 'table_name', and 'column', we can verify that when grouped by that particular column, there exists the same number of records. This will prove that we are inserting unique records into the database. 
