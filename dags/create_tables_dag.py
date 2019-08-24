@@ -42,43 +42,44 @@ start_operator = PythonOperator(task_id='begin_execution',
                                 python_callable=begin_execution,
                                 dag=dag)
 
-finish_operator = PythonOperator(task_id='finish_execution',
-                                 python_callable=finish_execution,
-                                 dag=dag)
-
 etl_immigration_data = ETLOperator(task_id='etl_immigration_data',
                                    read_df=read_immigration_data,
                                    clean_df=clean_immigration_data,
                                    table_name='immigrations',
-                                   write_subset=True,
+                                   write_subset=False,
+                                   write_sample=1000,
                                    dag=dag)                                 
 
 etl_global_temperatures = ETLOperator(task_id='global_temperatures_data',
                                       read_df=read_global_temperatures,
                                       clean_df=clean_global_temperatures,
                                       table_name='global_temperatures',
-                                      write_subset=True,
+                                      write_subset=False,
+                                      write_sample=1000,
                                       dag=dag)
                                 
 etl_global_temperatures_by_country = ETLOperator(task_id='global_temperatures_by_country_data',
                                                  read_df=read_global_temperatures_by_country,
                                                  clean_df=clean_global_temperatures_by_country,
                                                  table_name='global_temperatures_by_country',
-                                                 write_subset=True,
+                                                 write_subset=False,
+                                                 write_sample=1000,
                                                  dag=dag)
                                                 
 etl_demographics = ETLOperator(task_id='demographics_data',
                                read_df=read_demographics,
                                clean_df=clean_demographics,
                                table_name='demographics',
-                               write_subset=True,
+                               write_subset=False,
+                               write_sample=1000,
                                dag=dag)
                     
 etl_airport_codes = ETLOperator(task_id='airport_codes_data',
                                 read_df=read_airport_codes,
                                 clean_df=clean_airport_codes,
                                 table_name='airport_codes',
-                                write_subset=True,
+                                write_subset=False,
+                                write_sample=1000,
                                 dag=dag)
 
 create_countries_sql = """
@@ -178,7 +179,7 @@ check_airport_codes_distinct_records = EnsureDistinctRecords(task_id='check_airp
 start_operator >> create_immigration >> etl_immigration_data >> check_immigration_records >> check_immigration_distinct_records
 start_operator >> create_global_temperatures >> etl_global_temperatures >> check_global_temperature_records
 start_operator >> create_global_temperatures_by_country >> etl_global_temperatures_by_country >> check_global_temperature_by_country_records
-start_operator >> create_demographics >> etl_demographics 
+start_operator >> create_demographics >> etl_demographics >> check_demographic_records
 start_operator >> create_airport_codes >> etl_airport_codes >> check_airport_codes >> check_airport_codes_distinct_records
 start_operator >> create_countries >> create_countries_dimension_table >> check_country_records >> check_countries_distinct_records
 start_operator >> create_cities >> create_cities_dimension_table >> check_cities >> check_cities_distinct_records

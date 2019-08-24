@@ -34,7 +34,7 @@ class EnsureRecords(BaseOperator):
 
             cursor.execute(f'select count(*) from {self.table_name}')
 
-            total_count = cursor.fetch_one()
+            total_count = cursor.fetchone()
 
             logging.info("Total Count::{total_count}")
 

@@ -18,6 +18,7 @@ class ETLOperator(BaseOperator):
                  read_df,
                  clean_df,
                  write_subset=False,
+                 write_sample=False,
                  redshift_conn_id='amazon-redshift',
                  redshift_connection_var='amazon-redshift',
                  *args, **kwargs):
@@ -32,6 +33,7 @@ class ETLOperator(BaseOperator):
         self.read_df = read_df
         self.clean_df = clean_df
         self.write_subset= write_subset
+        self.write_sample = write_sample
         self.redshift_conn_id = redshift_conn_id
         self.redshift_connection_var = redshift_connection_var
 
@@ -55,6 +57,9 @@ class ETLOperator(BaseOperator):
 
             if self.write_subset:
                 df = df.iloc[0:10]
+
+            if self.write_sample:
+                df = df.sample(n=self.write_sample)
 
             print(f'Writing::{len(df)} rows.')
 

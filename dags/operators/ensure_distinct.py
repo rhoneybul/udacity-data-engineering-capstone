@@ -36,13 +36,13 @@ class EnsureDistinctRecords(BaseOperator):
 
             cursor.execute(f'select count(*) from {self.table_name}')
 
-            total_count = cursor.fetch_one()
+            total_count = cursor.fetchone()
 
             logging.info("Total Count::{total_count}")
 
             cursor.execute(f'select count (distinct {self.distinct_column}) from {self.table_name}')
 
-            unique_count = cursor.fetch_one()
+            unique_count = cursor.fetchone()
 
             logging.info("Unique Count::{unique_count}")
 
