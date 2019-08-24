@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS countries (
     name VARCHAR,
     PRIMARY KEY (country_id)
 )
-DISTKEY (country_code);
+diststyle all;
 """
 
 create_demographics = """

@@ -111,7 +111,7 @@ Since the source country for each immigration is given in country, we will just 
 
 **countries**
 
-The following table will serve as a dimension table for all the countries. Since we want to create joins between this table, and the immigrations table, we will use a key distribution, with the country code being the dist key
+The following table will serve as a dimension table for all the countries. We have chosen an 'all' distribution for the table, since it will not grow too large, by redshifts standards.
 
 | Table Name :: `countries`  
 | - `country_code integer NOT NULL PRIMARY KEY DISTKEY` _country code_  

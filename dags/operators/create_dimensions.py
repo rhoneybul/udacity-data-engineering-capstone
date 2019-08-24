@@ -39,6 +39,8 @@ class DimensionTableOperator(BaseOperator):
 
             cursor.execute(self.sql_statement)
 
+            conn.commit()
+
             cursor.close()
 
             conn.close()

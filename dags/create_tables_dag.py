@@ -85,12 +85,12 @@ select distinct country from global_temperatures_by_country;
 """
 
 create_countries_dimension_table = DimensionTableOperator(task_id='create_countries_dimensions',
-                                                          sql_statement='select count(*) from global_temperatures',
+                                                          sql_statement=create_countries_sql,
                                                           dag=dag)
                                                     
 create_cities_sql = """
 insert into cities (state_code, state, name)
-select distinct state_code, state, name from demographics;
+select distinct state_code, state, city from demographics;
 """                                                    
 
 create_cities_dimension_table = DimensionTableOperator(task_id='create_cities_dimensions',
